@@ -41,10 +41,12 @@ namespace Sudoku
             mouse_event(MouseFlags.Absolute | MouseFlags.LeftUp, x, y, 0, UIntPtr.Zero);
         }
 
-        private void mouseMove(int x, int y)
-        {
-            mouse_event(/* MouseFlags.Absolute | */ MouseFlags.Move, x, y, 0, UIntPtr.Zero);
-        }
+        
+        //private void mouseMove(int x, int y)
+        //{
+       //     mouse_event(/* MouseFlags.Absolute | */ MouseFlags.Move, x, y, 0, UIntPtr.Zero);
+       // }
+       
 
         /// <summary>
         /// Нажатие клавиши клавиатуры.
