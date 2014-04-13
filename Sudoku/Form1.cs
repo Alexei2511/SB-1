@@ -31,7 +31,9 @@ namespace Sudoku
             t1.Start();
             ip = new ImageProccessor();
             ip.GetScreenshot().Save("E:\\Original.bmp", ImageFormat.Bmp);
-            ip.FindGameArea(ip.GetSumMap(ip.SetBlack(ip.GetScreenshot())));
+            Bitmap bmp = new Bitmap("Icon.bmp");
+            int[,] map = ip.GetMap(ip.SetBlack(ip.GetScreenshot()));
+            ip.FindGameArea(ip.GetSumMap(map), bmp, 4, map);
             //ip.CreateBmp(0, 0);
             //if (ip.FindIcon())
               //  MessageBox.Show("Find");
