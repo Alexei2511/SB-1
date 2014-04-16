@@ -89,7 +89,7 @@ namespace Sudoku
 
             // Разблокируем набор данных изображения в памяти.
             bmp.UnlockBits(bmpData);
-            bmp.Save("E:\\GreyImg.bmp", ImageFormat.Bmp);
+            bmp.Save("G:\\GreyImg.bmp", ImageFormat.Bmp);
             return bmp;
         }
 
@@ -183,16 +183,12 @@ namespace Sudoku
                     {
                         area.X = i - areaInfo.Width + 1;
                         area.Y = j - areaInfo.Height + 1;
-                        areas.Add(area);
                         if (checkArea(area, map, areaInfo, ac))
                         {
-                            map[area.X, area.Y] = 2;
                             CreateBmp(m, "AA" + r, area.X, area.Y);
-                            map[area.X, area.Y] = 0;
-                            r++;
+                            areas.Add(area);
                         }
-                        index++;
-                    }
+                    }   
                 }
             }
             return false;
@@ -220,35 +216,9 @@ namespace Sudoku
             {
                 for (int j = area.Y - 1 + ac; j < area.Y + areaInfo.Height; j += ac)
                 {
-                    if (i - ac < 0 && j - ac < 0)
-                    {
-                        sum = map[i, j];
-                    }
-                    else if (i - ac < 0)
-                    {
-                        sum = map[i, j] - map[i, j - ac];
-                    }
-                    else if (j - ac < 0)
-                    {
-                        sum = map[i, j] - map[i - ac, j];
-                    }
-                    else
-                        sum = map[i, j] - map[i - ac, j] - map[i, j - ac] + map[i - ac, j - ac];
+                    sum = map[i, j] - map[i - ac, j] - map[i, j - ac] + map[i - ac, j - ac];
                     int asum = 0;
-                    if (si - ac < 0 && sj - ac < 0)
-                    {
-                        asum = areaInfo.SumMap[si, sj];
-                    }
-                    else if (si - ac < 0)
-                    {
-                        asum = areaInfo.SumMap[si, sj] - areaInfo.SumMap[si, sj - ac];
-                    }
-                    else if (sj - ac < 0)
-                    {
-                        asum = areaInfo.SumMap[si, sj] - areaInfo.SumMap[si - ac, sj];
-                    }
-                    else
-                        asum = areaInfo.SumMap[si, sj] - areaInfo.SumMap[si - ac, sj] - areaInfo.SumMap[si, sj - ac] + areaInfo.SumMap[si - ac, sj - ac];
+                    asum = areaInfo.getSum(si, sj, ac);
                     if (sum != asum)
                         return false;
                     sj += ac;
@@ -257,19 +227,6 @@ namespace Sudoku
                 sj = ac - 1;
             }
             return true;
-        }
-
-        private int checkSubArea(int x, int y, int size)
-        {
-            int sum = 0;
-            for (int i = x; i < x + size; i++)
-            {
-                for (int j = y; j < y + size; j++)
-                {
-                    //sum += map[i, j];
-                }
-            }
-            return sum;
         }
 
         public void CreateBmp(int[,] map, string name, int ri = -1, int rj = -1)
@@ -285,89 +242,15 @@ namespace Sudoku
                         color = Color.Black;
                     else if (map[i, j] == 0)
                         color = Color.White;
+                    //color = Color.FromArgb(map[i, j], map[i, j], map[i, j]);
                     bmp.SetPixel(i, j, color);
                 }
             }
             if (ri != -1 && rj != -1)
                 bmp.SetPixel(ri, rj, Color.Red);
-            bmp.Save("E:\\" + name + ".bmp", ImageFormat.Bmp);
+            bmp.Save("G:\\" + name + ".bmp", ImageFormat.Bmp);
         }
 
-        public void/*List<Area>*/ Proccess(Bitmap bmp)
-        {/*
-            Color pixel;
-            areas = new List<Area>();
-            sumMap = new int[bmp.Width, bmp.Height];
-            int curPixel = 0;
-            Area area = new Area();
-            int sum = 0;
-            for (int i = 0; i < bmp.Width; i++)
-            {
-                for (int j = 0; j < bmp.Height; j++)
-                {
-                    bmp.SetPixel(2, 100, Color.Green);
-                    pixel = bmp.GetPixel(i, j);
-                    if (pixel.B <= 255 && pixel.G <= 100 && pixel.R <= 100)
-                    {
-                        bmp.SetPixel(i, j, Color.Black);
-                        curPixel = 1;
-                    }
-                    else
-                    {
-                        bmp.SetPixel(i, j, Color.White);
-                        curPixel = 0;
-                    }
-                    if (i - 1 < 0 && j - 1 < 0)
-                        sumMap[i, j] = curPixel;
-                    else if (i - 1 < 0)
-                        sumMap[i, j] = sumMap[i, j - 1] + curPixel;
-                    else if (j - 1 < 0)
-                        sumMap[i, j] = sumMap[i - 1, j] + curPixel;
-                    else
-                        sumMap[i, j] = sumMap[i - 1, j] + sumMap[i, j - 1] + curPixel - sumMap[i - 1, j - 1];
-                    if (i - 16 < 0 && j - 16 < 0)
-                    {
-                        sum = sumMap[i, j];
-                    }
-                    else if (i - 16 < 0)
-                    {
-                        sum = sumMap[i, j] - sumMap[i, j - 16];
-                    }
-                    else if (j - 16 < 0)
-                    {
-                        sum = sumMap[i, j] - sumMap[i - 16, 16];
-                    }
-                    else
-                        sum = sumMap[i, j] - sumMap[i - 16, j] - sumMap[i, j - 16] + sumMap[i - 16, j - 16];
-                    if (sum >= 135 && sum <= 139)
-                    {
-                        area.X = i - 15;
-                        area.Y = j - 15;
-                        bmp.SetPixel(i - 15, j - 15, Color.Red);
-                        area.SizeX = 16;
-                        areas.Add(area);
-
-                    }
-                }
-            }
-            //getAreas(bmp.Width, bmp.Height);
-            bmp.Save("E:\\procImg.bmp", ImageFormat.Bmp);*/
-            return;
-        }
-
-        private double[] getArea(Area area)
-        {
-            double[] mas = new double[256];
-         /*   int k = 0;
-            for (int i = area.X; i < area.SizeX; i++)
-            {
-                for (int j = area.Y; j < area.SizeX; j++)
-                {
-                    mas[k] = sumMap[i, j];
-                    k++;
-                }
-            }*/
-            return mas;
-        }
+      
     }
 }
