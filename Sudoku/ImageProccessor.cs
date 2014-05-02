@@ -89,7 +89,7 @@ namespace Sudoku
 
             // Разблокируем набор данных изображения в памяти.
             bmp.UnlockBits(bmpData);
-            bmp.Save("G:\\GreyImg.bmp", ImageFormat.Bmp);
+            bmp.Save("D:\\GreyImg.bmp", ImageFormat.Bmp);
             return bmp;
         }
 
@@ -248,7 +248,7 @@ namespace Sudoku
             }
             if (ri != -1 && rj != -1)
                 bmp.SetPixel(ri, rj, Color.Red);
-            bmp.Save("G:\\" + name + ".bmp", ImageFormat.Bmp);
+            bmp.Save("D:\\" + name + ".bmp", ImageFormat.Bmp);
         }
 
       

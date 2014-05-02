@@ -30,7 +30,7 @@ namespace Sudoku
             Stopwatch t1 = new Stopwatch();
             t1.Start();
             ip = new ImageProccessor();
-            ip.GetScreenshot().Save("G:\\Original.bmp", ImageFormat.Bmp);
+            ip.GetScreenshot().Save("D:\\Original.bmp", ImageFormat.Bmp);
             Bitmap bmp = new Bitmap("Icon.bmp");
             int[,] map = ip.GetMap(ip.SetBlack(ip.GetScreenshot()));
             ip.FindGameArea(ip.GetSumMap(map), bmp, 4, map);
