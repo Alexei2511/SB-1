@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Drawing;
 using System.Drawing.Imaging;
+using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices;
 using System.Text;
@@ -12,12 +13,10 @@ namespace Sudoku
 {
     class ImageProccessor
     {
-        private List<Area> areas;
         private Area icon;
 
         public ImageProccessor()
         {
-            areas = new List<Area>();
         }
 
         public Bitmap GetScreenshot()
@@ -167,12 +166,13 @@ namespace Sudoku
             return sumMap;
         }
 
-        public bool FindGameArea(int[,] map, Bitmap bmp, int ac, int[,] m)
+        public List<Area> FindGameArea(int[,] map, Bitmap bmp, int ac, int[,] m)
         {
             int sum = 0;
             int r = 0;
             int index = 0;
             Area area = new Area();
+            List<Area> areas = new List<Area>();
             AreaInfo areaInfo = GetBmpInfo(bmp);
             for (int i = areaInfo.Width + 1; i < map.GetLength(0); i++)
             {
@@ -191,7 +191,7 @@ namespace Sudoku
                     }   
                 }
             }
-            return false;
+            return areas;
         }
 
         private AreaInfo GetBmpInfo(Bitmap bmp)
@@ -218,7 +218,22 @@ namespace Sudoku
                 {
                     sum = map[i, j] - map[i - ac, j] - map[i, j - ac] + map[i - ac, j - ac];
                     int asum = 0;
-                    asum = areaInfo.getSum(si, sj, ac);
+                    //asum = areaInfo.getSum(si, sj, ac);
+                    if (si - ac < 0 && sj - ac < 0)
+                    {
+                        asum = areaInfo.SumMap[si, sj];
+                    }
+                    else if (si - ac < 0)
+                    {
+                        asum = areaInfo.SumMap[si, sj] - areaInfo.SumMap[si, sj - ac];
+                    }
+                    else if (sj - ac < 0)
+                    {
+                        asum = areaInfo.SumMap[si, sj] - areaInfo.SumMap[si - ac, sj];
+                    }
+                    else
+                        asum = areaInfo.SumMap[si, sj] - areaInfo.SumMap[si - ac, sj] - areaInfo.SumMap[si, sj - ac] + areaInfo.SumMap[si - ac, sj - ac];
+                    
                     if (sum != asum)
                         return false;
                     sj += ac;
