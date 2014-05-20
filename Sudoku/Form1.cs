@@ -33,7 +33,9 @@ namespace Sudoku
             ip.GetScreenshot().Save("D:\\Original.bmp", ImageFormat.Bmp);
             Bitmap bmp = new Bitmap("Icon.bmp");
             int[,] map = ip.GetMap(ip.SetBlack(ip.GetScreenshot()));
-            ip.FindGameArea(ip.GetSumMap(map), bmp, 4, map);
+            int[,] sumMap = ip.GetSumMap(map);
+            Area gameArea = ip.FindGameArea(sumMap, bmp, 4, map);
+            int[,] arr = ip.FindDigits(sumMap, gameArea);
             //ip.CreateBmp(0, 0);
             //if (ip.FindIcon())
               //  MessageBox.Show("Find");
@@ -43,6 +45,14 @@ namespace Sudoku
             /*Bitmap bmp = ip.GetScreenshot();*/
             t1.Stop();
             MessageBox.Show(t1.ElapsedMilliseconds.ToString());
+            for (int i = 0; i < 9; i++)
+            {
+                for (int j = 0; j < 9; j++)
+                {
+                    richTextBox1.AppendText(arr[i, j] + " ");
+                }
+                richTextBox1.AppendText("\n");
+            }
             /*Stopwatch t1 = new Stopwatch();
             t1.Start();
             ip.Proccess(bmp);

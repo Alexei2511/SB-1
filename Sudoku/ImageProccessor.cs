@@ -23,7 +23,7 @@ namespace Sudoku
         {
             Graphics gr;
             Bitmap bmp = new Bitmap(Screen.PrimaryScreen.Bounds.Width, Screen.PrimaryScreen.Bounds.Height,
-                PixelFormat.Format32bppRgb);
+                PixelFormat.Format24bppRgb);
             gr = Graphics.FromImage(bmp);
             gr.CopyFromScreen(Screen.PrimaryScreen.Bounds.X, Screen.PrimaryScreen.Bounds.Y,
                 0, 0, Screen.PrimaryScreen.Bounds.Size, CopyPixelOperation.SourceCopy);
@@ -44,11 +44,11 @@ namespace Sudoku
             IntPtr ptr = bmpData.Scan0;
 
             // Задаём массив из Byte и помещаем в него надор данных.
-            // int numBytes = bmp.Width * bmp.Height * 3; 
+             int numBytes = bmp.Width * bmp.Height * 3; 
             //На 3 умножаем - поскольку RGB цвет кодируется 3-мя байтами
             //Либо используем вместо Width - Stride
-            int numBytes = bmpData.Stride * bmp.Height;
-            int widthBytes = bmpData.Stride;
+            //int numBytes = bmpData.Stride * bmp.Height;
+            //int widthBytes = bmpData.Stride;
             byte[] rgbValues = new byte[numBytes];
 
             // Копируем значения в массив.
@@ -108,11 +108,11 @@ namespace Sudoku
             IntPtr ptr = bmpData.Scan0;
 
             // Задаём массив из Byte и помещаем в него надор данных.
-            // int numBytes = bmp.Width * bmp.Height * 3; 
+             int numBytes = bmp.Width * bmp.Height * 3; 
             //На 3 умножаем - поскольку RGB цвет кодируется 3-мя байтами
             //Либо используем вместо Width - Stride
-            int numBytes = bmpData.Stride * bmp.Height;
-            int widthBytes = bmpData.Stride;
+            //int numBytes = bmpData.Stride * bmp.Height;
+            //int widthBytes = bmpData.Stride;
             byte[] rgbValues = new byte[numBytes];
 
             // Копируем значения в массив.
@@ -145,6 +145,13 @@ namespace Sudoku
             CreateBmp(map, "QQ1");
             return map;
         }
+        /*if (i == bmp.Width - 1)
+                {
+                    i = 0;
+                    j++;
+                }
+                else
+                    i++;*/
 
         public int[,] GetSumMap(int[,] map)
         {
@@ -166,13 +173,11 @@ namespace Sudoku
             return sumMap;
         }
 
-        public List<Area> FindGameArea(int[,] map, Bitmap bmp, int ac, int[,] m)
+        public Area FindGameArea(int[,] map, Bitmap bmp, int ac, int[,] m)
         {
             int sum = 0;
             int r = 0;
-            int index = 0;
             Area area = new Area();
-            List<Area> areas = new List<Area>();
             AreaInfo areaInfo = GetBmpInfo(bmp);
             for (int i = areaInfo.Width + 1; i < map.GetLength(0); i++)
             {
@@ -185,13 +190,62 @@ namespace Sudoku
                         area.Y = j - areaInfo.Height + 1;
                         if (checkArea(area, map, areaInfo, ac))
                         {
-                            CreateBmp(m, "AA" + r, area.X, area.Y);
-                            areas.Add(area);
+                            Area a = new Area();
+                            a.X = area.X + 2;
+                            a.Y = area.Y + 45;
+                            a.SizeX = 538;
+                            a.SizeY = 538;
+                            CreateBmp(m, "AA" + r, a.X, a.Y);
+                            return a;
                         }
                     }   
                 }
             }
-            return areas;
+            return default(Area);
+        }
+
+        public int[,] FindDigits(int[,] map, Area area)
+        {
+            int[,] arr = new int[9, 9];
+            Bitmap bmp;
+            int sum = 0;
+            AreaInfo info;
+            for (int k = 1; k < 10; k++)
+            {
+                bmp = new Bitmap(k + ".bmp");
+                info = GetBmpInfo(bmp);
+                for (int i = area.X; i < area.X + area.SizeX; i += 60)
+                {
+                    for (int j = area.Y; j < area.Y + area.SizeY; j += 60)
+                    {
+                        sum = map[i + info.Width - 1, j + info.Height - 1] - map[i + info.Width - 1, j] - map[i, j + info.Height - 1] + map[i, j];
+                        if (sum == info.Sum)
+                        {
+                            if (k == 4 || k == 5)
+                            {
+                                Area a = new Area();
+                                a.X = i;
+                                a.Y = j;
+                                a.SizeX = info.Width;
+                                a.SizeY = info.Height;
+                                if (checkArea(a, map, info, 28))
+                                    arr[(i - area.X) / 60, (j - area.Y) / 60] = k;
+                                continue;
+                            }
+                            arr[(i - area.X) / 60, (j - area.Y) / 60] = k;
+                        }
+                    }
+                }
+            }
+            int[,] dest = new int[9, 9];
+            for (int i = 0; i < 9; i++)
+            {
+                for (int j = 0; j < 9; j++)
+                {
+                    dest[i, j] = arr[j, i];
+                }
+            }
+            return dest;
         }
 
         private AreaInfo GetBmpInfo(Bitmap bmp)

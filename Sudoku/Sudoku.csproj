@@ -46,7 +46,6 @@
   <ItemGroup>
     <Compile Include="Area.cs" />
     <Compile Include="AreaInfo.cs" />
-    <Compile Include="BasicInput.cs" />
     <Compile Include="Form1.cs">
       <SubType>Form</SubType>
     </Compile>
