@@ -27,15 +27,41 @@ namespace Sudoku
 
         private void button1_Click(object sender, EventArgs e)
         {
+            richTextBox1.Clear();
             Stopwatch t1 = new Stopwatch();
             t1.Start();
             ip = new ImageProccessor();
-            ip.GetScreenshot().Save("D:\\Original.bmp", ImageFormat.Bmp);
+            //ip.GetScreenshot().Save("D:\\Original.bmp", ImageFormat.Bmp);
             Bitmap bmp = new Bitmap("Icon.bmp");
             int[,] map = ip.GetMap(ip.SetBlack(ip.GetScreenshot()));
             int[,] sumMap = ip.GetSumMap(map);
             Area gameArea = ip.FindGameArea(sumMap, bmp, 4, map);
             int[,] arr = ip.FindDigits(sumMap, gameArea);
+            int[] dest = new int[81];
+            int k = 0;
+            for (int i = 0; i < 9; i++)
+            {
+                for (int j = 0; j < 9; j++)
+                {
+                    dest[k] = arr[i, j];
+                    k++;
+                }
+            }
+            GameMaker gm = new GameMaker();
+            int[] a = gm.testSudoku(dest, 3, 1);
+            k = 0;
+            t1.Stop();
+            MessageBox.Show(t1.ElapsedMilliseconds.ToString());
+            for (int i = 0; i < 9; i++)
+            {
+                for (int j = 0; j < 9; j++)
+                {
+                    richTextBox1.AppendText(a[k] + " ");
+                    k++;
+                }
+                richTextBox1.AppendText("\n");
+            }
+            gm.Draw(gameArea, a);
             //ip.CreateBmp(0, 0);
             //if (ip.FindIcon())
               //  MessageBox.Show("Find");
@@ -43,16 +69,14 @@ namespace Sudoku
             //ip.CreateBmp(0, 0, 0);
             //    MessageBox.Show("Find.");
             /*Bitmap bmp = ip.GetScreenshot();*/
-            t1.Stop();
-            MessageBox.Show(t1.ElapsedMilliseconds.ToString());
-            for (int i = 0; i < 9; i++)
+            /*for (int i = 0; i < 9; i++)
             {
                 for (int j = 0; j < 9; j++)
                 {
                     richTextBox1.AppendText(arr[i, j] + " ");
                 }
                 richTextBox1.AppendText("\n");
-            }
+            }*/
             /*Stopwatch t1 = new Stopwatch();
             t1.Start();
             ip.Proccess(bmp);

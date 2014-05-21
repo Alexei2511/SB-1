@@ -88,7 +88,6 @@ namespace Sudoku
 
             // Разблокируем набор данных изображения в памяти.
             bmp.UnlockBits(bmpData);
-            bmp.Save("D:\\GreyImg.bmp", ImageFormat.Bmp);
             return bmp;
         }
 
@@ -142,16 +141,8 @@ namespace Sudoku
 
             // Разблокируем набор данных изображения в памяти.
             bmp.UnlockBits(bmpData);
-            CreateBmp(map, "QQ1");
             return map;
         }
-        /*if (i == bmp.Width - 1)
-                {
-                    i = 0;
-                    j++;
-                }
-                else
-                    i++;*/
 
         public int[,] GetSumMap(int[,] map)
         {
@@ -195,7 +186,6 @@ namespace Sudoku
                             a.Y = area.Y + 45;
                             a.SizeX = 538;
                             a.SizeY = 538;
-                            CreateBmp(m, "AA" + r, a.X, a.Y);
                             return a;
                         }
                     }   
@@ -254,7 +244,6 @@ namespace Sudoku
             ai.Height = bmp.Height;
             ai.Width = bmp.Width;
             int[,] map = GetMap(SetBlack(bmp));
-            CreateBmp(map, "QQ");
             int[,] summap = GetSumMap(map);
             ai.SumMap = summap;
             ai.Sum = summap[bmp.Width - 1, bmp.Height - 1];
@@ -272,7 +261,6 @@ namespace Sudoku
                 {
                     sum = map[i, j] - map[i - ac, j] - map[i, j - ac] + map[i - ac, j - ac];
                     int asum = 0;
-                    //asum = areaInfo.getSum(si, sj, ac);
                     if (si - ac < 0 && sj - ac < 0)
                     {
                         asum = areaInfo.SumMap[si, sj];
@@ -297,29 +285,5 @@ namespace Sudoku
             }
             return true;
         }
-
-        public void CreateBmp(int[,] map, string name, int ri = -1, int rj = -1)
-        {
-            Bitmap bmp = new Bitmap(map.GetLength(0), map.GetLength(1));
-            Color color = Color.Black;
-
-            for (int i = 0; i < map.GetLength(0); i++)
-            {
-                for (int j = 0; j < map.GetLength(1); j++)
-                {
-                    if (map[i, j] == 1)
-                        color = Color.Black;
-                    else if (map[i, j] == 0)
-                        color = Color.White;
-                    //color = Color.FromArgb(map[i, j], map[i, j], map[i, j]);
-                    bmp.SetPixel(i, j, color);
-                }
-            }
-            if (ri != -1 && rj != -1)
-                bmp.SetPixel(ri, rj, Color.Red);
-            bmp.Save("D:\\" + name + ".bmp", ImageFormat.Bmp);
-        }
-
-      
     }
 }
