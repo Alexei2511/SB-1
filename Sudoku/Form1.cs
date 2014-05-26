@@ -5,6 +5,7 @@ using System.Data;
 using System.Diagnostics;
 using System.Drawing;
 using System.Drawing.Imaging;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -31,7 +32,6 @@ namespace Sudoku
             Stopwatch t1 = new Stopwatch();
             t1.Start();
             ip = new ImageProccessor();
-            //ip.GetScreenshot().Save("D:\\Original.bmp", ImageFormat.Bmp);
             Bitmap bmp = new Bitmap("Icon.bmp");
             int[,] map = ip.GetMap(ip.SetBlack(ip.GetScreenshot()));
             int[,] sumMap = ip.GetSumMap(map);
@@ -62,27 +62,6 @@ namespace Sudoku
                 richTextBox1.AppendText("\n");
             }
             gm.Draw(gameArea, a);
-            //ip.CreateBmp(0, 0);
-            //if (ip.FindIcon())
-              //  MessageBox.Show("Find");
-            //ip.FindIcon();
-            //ip.CreateBmp(0, 0, 0);
-            //    MessageBox.Show("Find.");
-            /*Bitmap bmp = ip.GetScreenshot();*/
-            /*for (int i = 0; i < 9; i++)
-            {
-                for (int j = 0; j < 9; j++)
-                {
-                    richTextBox1.AppendText(arr[i, j] + " ");
-                }
-                richTextBox1.AppendText("\n");
-            }*/
-            /*Stopwatch t1 = new Stopwatch();
-            t1.Start();
-            ip.Proccess(bmp);
-            bmp.Save("Screen.bmp", ImageFormat.Bmp);
-            t1.Stop();
-            MessageBox.Show(t1.ElapsedMilliseconds.ToString());*/
         }
 
         private void drawRect(ref Bitmap bmp, int x, int y, int size)
@@ -103,6 +82,24 @@ namespace Sudoku
             }
             bmp.SetPixel(x, y, Color.Blue);
             bmp.SetPixel(x + size - 1, y + size - 1, Color.Blue);
+        }
+
+        private void button2_Click(object sender, EventArgs e)
+        {
+            ip = new ImageProccessor();
+            ip.GetScreenshot().Save(textBox1.Text, ImageFormat.Bmp);
+        }
+
+        private void button3_Click(object sender, EventArgs e)
+        {
+            Input i = new Input();
+            i.MouseMove(Cursor.Position.X, Cursor.Position.Y, Cursor.Position.X + 100, Cursor.Position.Y + 100, 10);
+        }
+
+        private void button4_Click(object sender, EventArgs e)
+        {
+            ip = new ImageProccessor();
+            ip.SetBlack(ip.GetScreenshot()).Save(textBox2.Text, ImageFormat.Bmp);
         }
     }
 }
